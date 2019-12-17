@@ -39,7 +39,7 @@ public class zhuce {
 		   while(rs.next()) {
 				 zh2=rs.getString(1);
 			   }
-		   state.executeUpdate("insert  zhuce2(uesr_tea,password) values('"+a+"','"+b+"');");
+		   state.executeUpdate("insert  zhuce2(user_tea,password) values('"+a+"','"+b+"');");
 		   JDBCDemo.close(conn);
 		   JOptionPane.showMessageDialog(null, "×¢²á³É¹¦");
 	   }else {
