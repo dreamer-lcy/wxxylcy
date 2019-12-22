@@ -7,8 +7,11 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+
 import javax.swing.*;
 public class AdministratorView implements ActionListener{
     JMenuBar menul;
@@ -29,7 +32,7 @@ public class AdministratorView implements ActionListener{
 	String f,w,t;
 	Object[] columnNames= {"学号","姓名","班级","数学","语文","英语","理综"};
 	String[][] str1=new String[100][7];
-	JButton but1,but2,but3,but4,but5,but6,but7,but8,but9,but10,but11,but12,but13,but14,but15,but16;
+	JButton but1,but2,but3,but4,but5,but6,but7,but8,but9,but10,but11,but12,but13,but14,but15,but16,but17;
 	String[][] str=new String[100][7];
 	public void Guanliyuanjiemian() {
     	jm=new JFrame("学生成绩信息管理界面");
@@ -55,6 +58,7 @@ public class AdministratorView implements ActionListener{
     	but16=new JButton("3班");but16.setBounds(450, 224, 60, 30);
     	but3=new JButton("修改");but3.setBounds(330, 300, 60, 30);
     	but4=new JButton("查询");but4.setBounds(330, 300, 60, 30);
+    	but17=new JButton("查询");but17.setBounds(400,300,60,30);
     	but5=new JButton("返回");but5.setBounds(350, 300, 60, 30);
     	but6=new JButton("返回");but6.setBounds(250, 190, 60, 30);
     	but7=new JButton("返回");but7.setBounds(250, 300, 60, 30);
@@ -115,6 +119,7 @@ public class AdministratorView implements ActionListener{
 		txt16=new JTextField(10);  txt16.setBounds(168, 201, 150, 30);
 		txt21=new JTextField(10); txt21.setBounds(421, 149, 150, 30);
 		txt22=new JTextField(10); txt22.setBounds(421, 205, 150, 30);
+		JTextField text=new JTextField();
 		  comboBox.addItemListener(new ItemListener() {
 	            @Override
 	            public void itemStateChanged(ItemEvent e) {
@@ -151,7 +156,8 @@ public class AdministratorView implements ActionListener{
 		but13.addActionListener(this);
 		but14.addActionListener(this);
 		but15.addActionListener(this);
-		but16.addActionListener(this);	
+		but16.addActionListener(this);
+		but17.addActionListener(this);
 		
 		jm.setLayout(new BorderLayout());
 		
@@ -194,6 +200,7 @@ public class AdministratorView implements ActionListener{
 		jp3.add(label19);jp3.add(txt19);
 		jp3.add(label20);jp3.add(txt20);
 		jp3.add(but3);jp3.add(but7);jp3.add(lable28);
+		jp3.add(but17);
 		jp3.add(comboBox1);
 		jp3.add(lable26);
 		jp4.add(label12);jp4.add(txt12);
@@ -283,11 +290,35 @@ public class AdministratorView implements ActionListener{
 			}
 			
 		}
+		if(e.getSource()==but17) {
+					Connection conn;
+			try {
+				conn = JDBCDemo.open();
+				String sql="select 姓名,班级,数学,语文,英语,理综  from "+w+"  where 学号=?;";
+			    PreparedStatement state=conn.prepareStatement(sql);
+				state.setString(1, txt7.getText());
+			    ResultSet rs=state.executeQuery();
+			    while(rs.next()) {
+			    	txt8.setText(rs.getString(1));
+			    	txt9.setText(rs.getString(2));
+			    	txt10.setText(rs.getString(3));
+			    	txt11.setText(rs.getString(4));
+			    	txt19.setText(rs.getString(5));
+			    	txt20.setText(rs.getString(6));
+			    }
+			 txt7.setEnabled(false);   
+			    
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			
+		}
 		if(e.getSource()==but3) {
 			Connection conn;
 			try {
 				conn = JDBCDemo.open();
 				if(txt8.getText().length()!=0) {
+
 					String sql="update "+w+"  set 姓名=? where 学号=?; ";
 				    PreparedStatement state=conn.prepareStatement(sql);
 				    state.setString(1, txt8.getText());
@@ -301,28 +332,28 @@ public class AdministratorView implements ActionListener{
 				    state.setString(2, txt7.getText());
 				    state.executeUpdate();
 				}
-				if(txt10.getText().length()!=0) {
+				if(txt10.getText().length()!=0||txt10.getText().matches("^[0-9]*$")) {
 					String sql="update  "+w+" set 数学=? where 学号=?; ";
 				    PreparedStatement state=conn.prepareStatement(sql);
 				    state.setString(1, txt10.getText());
 				    state.setString(2, txt7.getText());
 				    state.executeUpdate();
 				}
-				if(txt11.getText().length()!=0) {
+				if(txt11.getText().length()!=0||txt11.getText().matches("^[0-9]*$")) {
 					String sql="update  "+w+" set 语文=? where 学号=?; ";
 				    PreparedStatement state=conn.prepareStatement(sql);
 				    state.setString(1, txt11.getText());
 				    state.setString(2, txt7.getText());
 				    state.executeUpdate();
 				}
-				if(txt19.getText().length()!=0) {
+				if(txt19.getText().length()!=0||txt19.getText().matches("^[0-9]*$")) {
 					String sql="update  "+w+" set 英语=?where 学号=?; ";
 				    PreparedStatement state=conn.prepareStatement(sql);
 				    state.setString(1, txt19.getText());
 				    state.setString(2, txt7.getText());
 				    state.executeUpdate();
 				}
-				if(txt20.getText().length()!=0) {
+				if(txt20.getText().length()!=0||txt20.getText().matches("^[0-9]*$")) {
 					String sql="update  "+w+" set 理综=? where 学号=?; ";
 				    PreparedStatement state=conn.prepareStatement(sql);
 				    state.setString(1, txt20.getText());
@@ -333,6 +364,7 @@ public class AdministratorView implements ActionListener{
 			    JDBCDemo.close(conn);
 			} catch (Exception e1) {
 				e1.printStackTrace();
+				JOptionPane.showMessageDialog(null, "修改不成功，请查看成绩是否是非数字！");
 			}
 		}
 		if(e.getSource()==but4) {
